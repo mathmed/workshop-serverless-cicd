@@ -1,5 +1,5 @@
 
-from typing import Dict, List
+from typing import List
 from time import time
 from pydantic import BaseModel
 

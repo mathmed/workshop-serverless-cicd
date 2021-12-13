@@ -1,5 +1,5 @@
 from http import HTTPStatus
-from todo import AddTodoResponse, GetTodosResponse, TodoService, TodoParams
+from .todo import AddTodoResponse, GetTodosResponse, TodoService, TodoParams
 from fastapi import FastAPI
 
 app = FastAPI(

@@ -1,4 +1,4 @@
-from todo import TodoParams, TodoService
+from .todo import TodoParams, TodoService
 from faker import Faker
 
 faker = Faker()
