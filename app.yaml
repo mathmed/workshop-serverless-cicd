@@ -1,3 +1,3 @@
-service: serverless-cicd
+service: default
 runtime: python37
 entrypoint: gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker
