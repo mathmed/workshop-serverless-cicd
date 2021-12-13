@@ -10,10 +10,13 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v2
+    - name: Autenticação
+      uses: 'google-github-actions/auth@v0.4.0'
+      with:
+        credentials_json: ${{ secrets.GCP_CREDENTIALS }}
     - name: Deploy no APP Engine
       uses: google-github-actions/deploy-appengine@main
       with:
-        credentials: ${{ secrets.GCP_CREDENTIALS }}
         deliverables: app.yaml
         promote: true
         version: v1
