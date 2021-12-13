@@ -1,0 +1,52 @@
+name: "CI PIPELINE"
+
+on: [push]
+
+jobs:
+  buildAndUnitTest:
+    name: Rodando testes unitários
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.9]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Instalando Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Instalando dependências
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 pytest faker coverage pytest-cov
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - name: Rodando projeto
+        run: |
+          gunicorn --bind 0.0.0.0:8080 app.main:app -w 4 -k uvicorn.workers.UvicornWorker &
+          sleep 5
+          curl http://127.0.0.1:8080/docs
+      - name: Cobertura de teste com Pyteste
+        run: |
+          pytest --cov-config=.coveragerc --cov-report=xml --doctest-modules --cov=. app/
+      - name: Salva arquivo de cobertura de testes
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: coverage.xml
+
+  codeQualitySonarScan:
+    name: Analisando qualidade do código com SonarQube
+    needs: buildAndUnitTest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Download do arquivo de cobertura de testes
+        uses: actions/download-artifact@v2
+      - name: Move arquivo de cobertura para pasta correta
+        shell: bash
+        run: |
+          sed -i 's+/home/runner/work/${{ github.event.repository.name }}/${{ github.event.repository.name }}+/github/workspace+g' code-coverage-report/coverage.xml
+      - uses: SonarSource/sonarcloud-github-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

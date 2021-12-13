@@ -1,0 +1,14 @@
+version: "3.5"
+services:
+  app:
+    container_name: serverless-cicd
+    build: ./
+    ports:
+      - 80:80
+    volumes:
+      - ../:/home/app
+    networks:
+      - app_network
+networks:
+  app_network:
+    driver: bridge
