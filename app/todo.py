@@ -11,6 +11,7 @@ class AddTodoResponse(BaseModel):
     description: str
     owner: str
     timestamp: int
+    teste: str
 
 class GetTodosResponse(BaseModel):
     todos: List[AddTodoResponse]
@@ -24,7 +25,8 @@ class TodoService():
         todo = AddTodoResponse(
             description=todo.description,
             owner=todo.owner,
-            timestamp=int(time())
+            timestamp=int(time()),
+            teste='teste'
         )
         self.todos.append(todo.__dict__)
         return todo
